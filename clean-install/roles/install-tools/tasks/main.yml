@@ -1,0 +1,33 @@
+---
+# tasks file for common-tools
+
+- name: Update and upgrade apt packages
+  become: True
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+  tags: packages
+
+- name: Install GIT
+  apt:
+    name: git
+  tags: packages, git
+
+- name: Install Pyhton
+  apt:
+    name: ['python3-pip', 'python3-venv']
+  tags: packages, python, pip
+
+- name: Install Docker
+  apt:
+    name: ['runc', 'docker.io', 'docker-compose']
+    state: latest
+  tags: packages, docker
+
+- name: Install Portainer
+  apt:
+    name: portainer
+  tag: packages, portainer
+
+

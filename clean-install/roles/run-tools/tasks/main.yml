@@ -1,0 +1,19 @@
+---
+# tasks file for run-tools
+- name: run Docker
+  service:
+    name: docker
+    state: started
+
+- name: Run Portainer
+  docker_container:
+    name: portainer
+    image: portainer/portainer-ce
+    pull: true
+    state: started
+    detach: true
+    published_ports:
+      - 9000:9000
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
