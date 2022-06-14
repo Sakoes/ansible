@@ -2,6 +2,8 @@
 - hosts: localhost
   
   become: yes
+  vars:
+    pi_services_path: /home/isaac/services
   roles:
-  #- common-tools
+  - common-tools
   - run-tools
