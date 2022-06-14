@@ -1,19 +1,20 @@
 ---
 # tasks file for run-tools
-- name: run Docker
+- name: Run Docker
   service:
     name: docker
     state: started
+  tags: docker
 
 - name: Run Portainer
-  docker_container:
-    name: portainer
-    image: portainer/portainer-ce
-    pull: true
-    state: started
-    detach: true
-    published_ports:
-      - 9000:9000
-    volumes:
-      - portainer_data:/data
-      - /var/run/docker.sock:/var/run/docker.sock
+  docker_compose:
+    project_src: "{{ pi_services_path }}/portainer"
+    state: present
+  tags: portainer
+
+- name: Run Homer Dashboard
+  docker_compose:
+    project_src: "{{ pi_services_path }}/homer"
+    state: present
+  tags: homer
+
