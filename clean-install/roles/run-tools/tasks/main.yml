@@ -4,17 +4,22 @@
   service:
     name: docker
     state: started
-  tags: docker
+  tags: tools, docker
 
 - name: Run Portainer
   docker_compose:
     project_src: "{{ pi_services_path }}/portainer"
     state: present
-  tags: portainer
+  tags: tools, portainer
 
 - name: Run Homer Dashboard
   docker_compose:
     project_src: "{{ pi_services_path }}/homer"
     state: present
-  tags: homer
+  tags: tools, homer
 
+- name: Run Jenkins Server
+  docker_compose:
+    project_src: "{{ pi_services_path }}/jenkins"
+    state: present
+  tags: tools, jenkins

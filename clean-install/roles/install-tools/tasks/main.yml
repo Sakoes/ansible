@@ -28,6 +28,9 @@
 - name: Install Portainer
   apt:
     name: portainer
-  tag: packages, portainer
+  tags: packages, portainer
+
+- name: Pull services repository from git
+  
 
 
