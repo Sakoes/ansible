@@ -23,3 +23,7 @@
     project_src: "{{ pi_services_path }}/jenkins"
     state: present
   tags: tools, jenkins
+
+- name: Download & Install k3s
+  ansible.builtin.shell: curl -sfL https://get.k3s.io | sh -
+  tags: tools, platform, k3s
