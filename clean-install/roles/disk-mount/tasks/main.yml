@@ -1,0 +1,40 @@
+---
+# tasks file for mounting ssd
+
+vars:
+  mnt_name: /mnt/ssd
+  #disk_name: blabla
+
+- name: Find disk name
+  shell:
+    cmd: fdisk -l | grep 14.5G | cut -d " " -f1
+  register: disk_name
+
+- name: Print name  
+  ansible.builtin.debug:
+    msg: "Disk to mount: {{ disk_name.stdout }}"
+
+
+#- name: Create partition
+  #shell: 
+    #cmd: mkfs.ext4 {{ disk_name.stdout }} -y
+
+#- name: Mount disk and add ownership
+  #shell: |
+  #    mkdir {{ mnt_path }}
+  #   chown -R isaac:isaac {{ mnt_path }}
+  #  mount {{ disk_name.stdout }} {{ mnt_path }}
+
+- name: Find disk UUID
+  shell:
+    cmd: blkid {{ disk_name.stdout }} --match-tag UUID --output value
+  register: disk_uuid
+  tags: uuid
+
+- name: Print disk uuid
+  ansible.builtin.debug:
+    msg: "Disk UUID: {{ disk_uuid.stdout }}"
+
+- name: Mount disk at startup
+  shell:
+    cmd: echo "UUID={{ disk_uuid.stdout }} {{ mnt_path }} ext4 defaults 0 0" >> /etc/fstab

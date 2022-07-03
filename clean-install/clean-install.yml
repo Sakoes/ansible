@@ -4,6 +4,12 @@
   become: yes
   vars:
     pi_services_path: /home/isaac/services
+    pi_hostname: pihome
+    pi_ip_addr: 192.168.0.103
+    router_ip_addr: 192.168.0.1
+
   roles:
-  - install-tools
-  - run-tools
+  #- configuration
+  - disk-mount
+  #- install-tools
+  #- run-tools

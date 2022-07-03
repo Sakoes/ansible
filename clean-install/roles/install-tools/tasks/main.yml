@@ -30,7 +30,4 @@
     name: portainer
   tags: packages, portainer
 
-- name: Pull services repository from git
-  
-
 
