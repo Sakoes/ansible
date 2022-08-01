@@ -1,0 +1,21 @@
+==============
+# Ansible
+==============
+- kubernetes.core (& other?) modules has to be installed before using it in playbook.
+    --> For now manual install, future think of seperate ansible config playbook?
+- Install ansible on master machine 
+    --> put agent on raspberry pi
+
+==============
+# k3s
+==============
+- Install k3s first, run everything (homer, portainer, jenkins...) from there with helm
+- Add remote dashboard
+- Fix kubeconfig so I don't hav to export it everytime
+
+
+
+==============
+# nextcloud
+==============
+- check hostname config in helm values if problems occur

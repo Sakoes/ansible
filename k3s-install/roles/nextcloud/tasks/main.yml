@@ -1,0 +1,49 @@
+- name: Create nextcloud namespace
+  kubernetes.core.k8s:
+    name: nextcloud
+    kind: Namespace
+    state: present
+  tags: nextcloud
+
+- name: Create nextcloud directory for PV
+  file:
+    path: /mnt/ssd/nextcloud
+    state: directory
+  tags: nextcloud
+
+- name: Create PersistentVolume
+  kubernetes.core.k8s:
+    src: nextcloud-persistentvolume.yml
+    state: present
+  tags: nextcloud
+
+- name: Create PersistentVolumeClaim
+  kubernetes.core.k8s:
+    src: nextcloud-persistentvolumeclaim.yml
+    state: present
+  tags: nextcloud
+
+- name: Configure nextcloud Helm repository
+  kubernetes.core.helm_repository:
+    name: nextcloud
+    url: https://nextcloud.github.io/helm/
+    state: present
+  tags: nextcloud
+
+- name: Insatll nextcloud
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: nextcloud
+    namespace: nextcloud
+    create_namespace: true
+    chart_ref: nextcloud/nextcloud
+    values_files: /home/isaac/ansible/k3s-install/roles/nextcloud/files/nextcloud-values.yml
+    atomic: true
+    release_state: present
+  tags: nextcloud
+
+- name: Deploy nextcloud ingress
+  kubernetes.core.k8s:
+    src: nextcloud-ingress.yml
+    state: present
+  tags: nextcloud, nextcloud-ingress

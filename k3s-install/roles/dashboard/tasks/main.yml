@@ -1,0 +1,29 @@
+- name: Download kuberentes dashboard yaml
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.6.0/aio/deploy/recommended.yaml
+    dest: roles/dashboard/files/k8s-dashboard.yml
+    mode: '0664'
+  run_once: true
+  tags: dashboard
+
+- name: Install kubernetes dashboard
+  kubernetes.core.k8s:
+    src: k8s-dashboard.yml
+    state: present
+  tags: dashboard
+
+- name: Create admin-user to connect kubernetes-dashboard
+  kubernetes.core.k8s:
+    src: service-account.yml
+    state: present
+  tags: dashboard
+
+- name: Get user access token
+  shell: kubectl -n kubernetes-dashboard create token admin-user
+  register: token
+  tags: dashboard, token
+
+- name: Print access token
+  debug:
+    var: token.stdout_lines
+  tags: dashboard, token

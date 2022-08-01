@@ -1,0 +1,56 @@
+- name: Add Helm repo
+  kubernetes.core.helm_repository:
+    repo_name: stable
+    repo_url: stable https://charts.helm.sh/stable
+    repo_state: present
+  tags: helm
+
+- name: Add nginx Helm repo
+  kubernetes.core.helm_repository:
+    repo_name: nginx-stable
+    repo_url: https://helm.nginx.com/stable
+    repo_state: present
+  tags: helm, nginx
+
+- name: Install Metallb
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: metallb
+    namespace: kube-system
+    chart_ref: stable/metallb
+    values:
+      configInline:
+        address-pools:
+        - name: default
+          protocol: layer2
+          addresses: 
+          - 192.168.0.240-192.168.0.250
+  tags: metallb
+    
+- name: Install nginx
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: nginx-ingress
+    namespace: kube-system
+    chart_ref: nginx-stable/nginx-ingress
+    values:
+      defaultBackend:
+        enabled: false
+  tags: nginx
+
+
+# - name: Install Metallb
+#   shell: |
+#     helm repo add stable https://charts.helm.sh/stable
+#     helm install metallb stable/metallb --namespace kube-system \
+#     --set configInline.address-pools[0].name=default \
+#     --set configInline.address-pools[0].protocol=layer2 \
+#     --set configInline.address-pools[0].addresses[0]=192.168.0.240-192.168.0.250
+#   tags: metallb
+
+# - name: Install nginx
+#   shell: |
+#     helm repo add nginx-stable https://helm.nginx.com/stable 
+#     helm repo update
+#     helm install nginx-ingress nginx-stable/nginx-ingress --namespace kube-system
+#   tags: nginx

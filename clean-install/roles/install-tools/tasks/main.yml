@@ -29,5 +29,3 @@
   apt:
     name: portainer
   tags: packages, portainer
-
-

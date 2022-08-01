@@ -1,0 +1,50 @@
+- name: Configure jetstack Helm repository
+  kubernetes.core.helm_repository:
+    name: jetstack
+    url: https://charts.jetstack.io
+    state: present
+  tags: cert-manager
+
+- name: Download cert-manager CRD
+  ansible.builtin.get_url:
+    url: https://github.com/cert-manager/cert-manager/releases/download/v1.9.0/cert-manager.crds.yaml
+    dest: roles/cert-manager/files/cert-manager-CRD.yml
+    mode: '0664'
+  run_once: true
+  tags: cert-manager
+
+- name: Pip install kubernetes & pyYAML for ansible k8s module
+  ansible.builtin.pip:
+    name:
+      - kubernetes
+      - pyYAML
+  tags: cert-manager, ansible
+
+- name: Apply cert-manager manifest
+  kubernetes.core.k8s:
+    src: cert-manager-CRD.yml
+    state: present
+  tags: cert-manager
+
+- name: Install cert-manager
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: cert-manager
+    namespace: cert-manager
+    create_namespace: true
+    chart_ref: jetstack/cert-manager
+    atomic: true
+    release_state: present
+  tags: cert-manager
+
+- name: Configure staging certificate issuer
+  kubernetes.core.k8s:
+    src: cert-issuer-staging.yml
+    state: present
+  tags: cert-manager, staging
+
+- name: Configure prod certificate issuer
+  kubernetes.core.k8s:
+    src: cert-issuer-prod.yml
+    state: present
+  tags: cert-manager, production

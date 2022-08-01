@@ -1,4 +1,6 @@
 
+# https://greg.jeanmart.me/2020/04/13/install-and-configure-a-kubernetes-cluster-w/
+
 - hosts: localhost
   
   become: yes
@@ -9,8 +11,8 @@
     router_ip_addr: 192.168.0.1
 
   roles:
-  - configuration
-  #- disk-mount
-  #- k3s
-  - install-tools
-  - run-tools
+  - install-config
+  - resources
+  - cert-manager
+  - dashboard
+  - nextcloud

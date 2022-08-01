@@ -35,6 +35,6 @@ vars:
   ansible.builtin.debug:
     msg: "Disk UUID: {{ disk_uuid.stdout }}"
 
-- name: Mount disk at startup
-  shell:
-    cmd: echo "UUID={{ disk_uuid.stdout }} {{ mnt_path }} ext4 defaults 0 0" >> /etc/fstab
+#- name: Mount disk at startup
+  #shell:
+    #cmd: echo "UUID={{ disk_uuid.stdout }} {{ mnt_path }} ext4 defaults 0 0" >> /etc/fstab
