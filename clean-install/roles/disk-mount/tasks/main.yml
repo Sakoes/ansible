@@ -1,9 +1,9 @@
 ---
 # tasks file for mounting ssd
 
-vars:
-  mnt_name: /mnt/ssd
-  #disk_name: blabla
+- vars:
+    mnt_name: /mnt/ssd
+#   #disk_name: blabla
 
 - name: Find disk name
   shell:

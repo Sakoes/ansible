@@ -1,0 +1,124 @@
+#####################################################################################
+# https://github.com/xcad2k/videos/tree/main/self-signed-certificates-in-kubernetes #
+#####################################################################################
+
+- name: Configure jetstack Helm repository
+  kubernetes.core.helm_repository:
+    name: jetstack
+    url: https://charts.jetstack.io
+    state: present
+  tags: CA
+
+- name: Install cert-manager
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: cert-manager
+    namespace: cert-manager
+    create_namespace: true
+    chart_ref: jetstack/cert-manager
+    atomic: true
+    release_state: present
+  tags: CA
+
+# - name: Set global variables
+#   set_fact:
+#     authority_dir: '/etc/ssl/private/k3s/'
+#     key_path: '/etc/ssl/private/k3s/ca.key'
+#     cert_path: '/etc/ssl/private/k3s/ca.crt'
+#   tags: CA
+
+# - name: Create directory for SSL key & cert
+#   file:
+#     path: "{{ authority_dir }}"
+#     state: directory
+#   tags: CA
+
+# - name: Generate SSL private RSA key
+#   community.crypto.openssl_privatekey:
+#     path: "{{ key_path }}"
+#     size: 4096
+#   tags: CA
+
+# - name: Create certificate w/ the CA key
+#   community.crypto.x509_certificate:
+#     path: "{{ cert_path }}"
+#     privatekey_path: "{{ key_path }}"
+#     provider: selfsigned
+#     selfsigned_digest: sha256
+#   tags: CA
+
+# - name: Encode certificate w/ base64 & register output
+#   shell: base64 -w 0 {{ cert_path }}
+#   register: cert_encoded
+#   tags: CA
+
+# - name: Add encoded cert to nginx Secret
+#   replace:
+#     path: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+#     regexp: "tls.crt:.*"
+#     replace: "tls.crt: {{ cert_encoded.stdout }}"
+#   tags: CA
+
+# - name: Add encoded cert to nginx Secret
+#   shell: CERT={{ cert_encoded.stdout }} yq -i 'data."tls.cert" = strenv(CERT)' /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+#   tags: CA
+
+# - name: Encode key w/ base64 & register output
+#   shell: base64 -w 0 {{ key_path }}
+#   register: key_encoded
+#   tags: CA
+
+# - name: Add encoded key to nginx Secret
+#   replace:
+#     path: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+#     regexp: " tls.key:.*"
+#     replace: " tls.key: {{ key_encoded.stdout }}"
+#   tags: CA
+
+# - name: Add encoded cert to nginx Secret
+#   shell: KEY={{ key_encoded.stdout }} yq -i 'data."tls.key" = strenv(KEY)' /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+#   tags: CA
+
+- name: Add Secret w/ cert & key to k8s cluster
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+    state: present
+  tags: CA
+
+- name: Add nginx clusterissuer w/ secret 
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-clusterissuer.yml
+    state: present
+  tags: CA
+
+- name: Create nginx test namespace
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-namepace.yml
+    state: present
+  tags: CA-test
+
+- name: Create certificate object in k8s
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-cert.yml
+    state: present
+  tags: CA-test
+
+- name: Create nginx Deployment
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-deployment.yml
+    state: present
+  tags: CA-test
+
+- name: Create nginx service 
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-service.yml
+    state: present
+  tags: CA-test
+
+- name: Create nginx Ingress
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ingress.yml
+    state: present
+  tags: CA-test
+
+

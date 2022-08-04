@@ -11,8 +11,20 @@
     router_ip_addr: 192.168.0.1
 
   roles:
-  - install-config
-  - resources
-  - cert-manager
-  - dashboard
-  - nextcloud
+  - role: install-config
+    tags: install-config
+    
+  - role: resources
+    tags: resources
+
+  - role: certificate-authority
+    tags: CA
+
+  - role: dashboard
+    tags: dashboard
+
+  - role: nextcloud
+    tags: nextcloud
+
+  - role: media-center
+    tags: media

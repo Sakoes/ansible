@@ -30,20 +30,25 @@
     state: present
   tags: nextcloud
 
-- name: Insatll nextcloud
+- name: Install nextcloud
   kubernetes.core.helm:
     update_repo_cache: true
     name: nextcloud
     namespace: nextcloud
-    create_namespace: true
     chart_ref: nextcloud/nextcloud
     values_files: /home/isaac/ansible/k3s-install/roles/nextcloud/files/nextcloud-values.yml
-    atomic: true
+    #atomic: true cannot use this, install throws error which causes the atomic setting to exec
     release_state: present
+  tags: nextcloud
+
+- name: Create certificate object
+  kubernetes.core.k8s:
+    src: nextcloud-cert.yml
+    state: present
   tags: nextcloud
 
 - name: Deploy nextcloud ingress
   kubernetes.core.k8s:
     src: nextcloud-ingress.yml
     state: present
-  tags: nextcloud, nextcloud-ingress
+  tags: nextcloud

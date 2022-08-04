@@ -1,0 +1,4 @@
+- name: Create namespace for media center
+  kubernetes.core.k8s:
+    src: mediacenter-ns.yml
+    state: present

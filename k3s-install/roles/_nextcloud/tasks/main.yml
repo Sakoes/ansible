@@ -1,0 +1,44 @@
+- name: Create nextcloud namespace
+  kubernetes.core.k8s:
+    name: nextcloud
+    kind: Namespace
+    state: present
+  tags: nextcloud
+
+- name: Create nextcloud directory for PV
+  file:
+    path: /mnt/ssd/nextcloud
+    state: directory
+  tags: nextcloud
+
+# - name: Add secret
+#   shell: kubectl create secret generic nextcloud-db-secret \
+#     --from-literal=MYSQL_ROOT_PASSWORD=rootPassw0rd1 \
+#     --from-literal=MYSQL_USER=nextcloud \
+#     --from-literal=MYSQL_PASSWORD=passw0rd1 \
+#     -n nextcloud
+#   tags: nextcloud
+
+- name: Create PersistentVolumeClaim
+  kubernetes.core.k8s:
+    src: nextcloud-pvc.yml
+    state: present
+  tags: nextcloud
+
+- name: Create nextcloud DB
+  kubernetes.core.k8s:
+    src: nextcloud-db.yml
+    state: present
+  tags: nextcloud
+
+- name: Create nextcloud server
+  kubernetes.core.k8s:
+    src: nextcloud-server.yml
+    state: present
+  tags: nextcloud
+
+- name: Deploy nextcloud ingress
+  kubernetes.core.k8s:
+    src: cluster-ingress.yml
+    state: present
+  tags: nextcloud

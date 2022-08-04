@@ -7,8 +7,9 @@
   tags: container_features, k3s
 
 - name: Switch Debian firewall to legacy config
-  shell: update-alternatives --set iptables /usr/sbin/iptables-legacy
-  shell: update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+  shell: |
+    update-alternatives --set iptables /usr/sbin/iptables-legacy
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
   tags: firewall, k3s
 
 - name: K3s pre-config

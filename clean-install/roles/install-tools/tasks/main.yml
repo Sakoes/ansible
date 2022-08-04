@@ -19,6 +19,16 @@
     name: ['python3-pip', 'python3-venv']
   tags: packages, python, pip
 
+- name: Install jq
+  apt:
+    name: jq
+  tags: packages
+
+- name: Install yq w/ pip3
+  ansible.builtin.pip:
+    name: yq
+  tags: packages, yq
+
 - name: Install Docker
   apt:
     name: ['runc', 'docker.io', 'docker-compose']
