@@ -27,3 +27,9 @@
 ==============
 - check hostname config in helm values if problems occur
 
+------
+PLAN
+------
+1. Finish media server
+2. Make dashboard ingress
+3. Add Prometheus and Grafana

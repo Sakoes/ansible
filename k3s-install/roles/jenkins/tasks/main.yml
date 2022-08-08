@@ -1,0 +1,12 @@
+- name: Add Jenkins helm restartPolicy
+  kubernetes.core.helm_repository:
+    name: jenkins
+    url: https://charts.jenkins.io
+    state: present
+
+
+
+- name: Install Jenkins helm chart
+  kubernetes.core.helm:
+    name: jenkins
+    namespace: jenkins

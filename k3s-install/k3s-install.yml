@@ -28,3 +28,6 @@
 
   - role: media-center
     tags: media
+  
+  - role: jenkins
+    tags: jenkins

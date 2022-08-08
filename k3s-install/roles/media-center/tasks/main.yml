@@ -2,3 +2,103 @@
   kubernetes.core.k8s:
     src: mediacenter-ns.yml
     state: present
+
+- name: Create directory for PV
+  file:
+    path: /mnt/ssd/media
+    state: directory
+
+- name: Create PV for media center
+  kubernetes.core.k8s:
+    src: mediacenter-pv.yml
+    state: present
+
+- name: Create PVC for media center
+  kubernetes.core.k8s:
+    src: mediacenter-pvc.yml
+    state: present
+  
+- name: Create media Ingress
+  kubernetes.core.k8s:
+    src: mediacenter-ingress.yml
+    state: present
+
+
+# - name: Create openvpn secret
+#   kubernetes.core.k8s:
+#     src: openvpn-secret.yml
+#     state: present
+
+# - name: Install openvpn transmission
+#   kubernetes.core.helm:
+#     update_repo_cache: true
+#     name: transmission
+#     namespace: media
+#     chart_ref: bananaspliff/transmission-openvpn
+#     values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/transmission-openvpn-values.yml
+#     release_state: present
+
+- name: Create directory for Jackett
+  file:
+    path: /mnt/ssd/media/configs/jackett/Jackett/ServerConfig.json
+    state: file
+
+- name: Create Jacket Serverconfig
+  copy:
+    dest: /mnt/ssd/media/configs/jackett/Jackett/ServerConfig.json
+    content: |
+      {
+        "BasePathOverride": "/jackett"
+      }
+
+- name: Add banaspliff helm repo
+  kubernetes.core.helm_repository:
+    name: bananaspliff
+    url: https://bananaspliff.github.io/geek-charts
+    state: present
+
+- name: Install jackett torrent indexer
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: jackett
+    namespace: media
+    chart_ref: bananaspliff/jackett
+    values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/jackett-values.yml
+    release_state: present
+
+# - name: Add banaspliff helm repo
+#   kubernetes.core.helm_repository:
+#     name: k8s-at-home
+#     url: https://k8s-at-home.com/charts/
+#     state: present
+
+# - name: Install openvpn transmission
+#   kubernetes.core.helm:
+#     update_repo_cache: true
+#     name: jackett
+#     namespace: media
+#     chart_ref: k8s-at-home/jackett
+#     values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/jackett-values.yml
+#     release_state: present
+
+- name: Create directory for Sonarr
+  file:
+    path: /mnt/ssd/media/configs/sonarr/
+    state: directory
+
+- name: Create sonarr config
+  copy:
+    dest: /mnt/ssd/media/configs/sonarr/config.xml
+    content: |
+      <Config>
+        <UrlBase>/sonarr</UrlBase>
+      </Config>
+
+- name: Install sonarr PVR for usenet and bittorrent
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: sonarr
+    namespace: media
+    chart_ref: bananaspliff/sonarr
+    values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/sonarr-values.yml
+    release_state: present

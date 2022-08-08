@@ -7,4 +7,9 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    
+    storage: 50Gi
+  accessModes:
+    - "ReadWriteMany"
+  hostPath:
+    path: /mnt/ssd/media
+---
