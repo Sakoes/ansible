@@ -1,12 +1,63 @@
-- name: Add Jenkins helm restartPolicy
+- name: Add Jenkins helm repo
   kubernetes.core.helm_repository:
     name: jenkins
     url: https://charts.jenkins.io
     state: present
 
+- name: Create jenkins namespace
+  kubernetes.core.k8s:
+    src: jenkins-ns.yml
+    state: present
 
+# - name: Create directory for PV
+#   file:
+#     path: /mnt/ssd/jenkins-volume/
+#     state: directory
+
+# - name: Create Peristent Volume
+#   kubernetes.core.k8s:
+#     src: jenkins-pv.yml
+#     state: present
+
+# - name: Create jenkins Service Account
+#   kubernetes.core.k8s:
+#     src: jenkins-sa.yml
+#     state: present
 
 - name: Install Jenkins helm chart
   kubernetes.core.helm:
+    update_repo_cache: true
     name: jenkins
     namespace: jenkins
+    chart_ref: jenkins/jenkins
+    release_state: present
+    values_files: /home/isaac/ansible/k3s-install/roles/jenkins/files/jenkins-values.yml
+
+- name: Create Jenkins Ingres Manually
+  kubernetes.core.k8s:
+    src: /home/isaac/ansible/k3s-install/roles/jenkins/files/jenkins-ingress.yml
+    state: present
+
+# - name: Get admin user password
+#   shell: |
+#     jsonpath="{.data.jenkins-admin-password}"
+#     secret=$(kubectl get secret -n jenkins jenkins -o jsonpath=$jsonpath)
+#     echo $(echo $secret | base64 --decode)
+#   register: jenkins_pass
+
+# - name: Print admin pass
+#   debug:
+#     var: jenkins_pass.stdout_lines
+
+# - name: Get jenkins URL
+#   shell: |
+#     jsonpath="{.spec.ports[0].nodePort}"
+#     NODE_PORT=$(kubectl get -n jenkins -o jsonpath=$jsonpath services jenkins)
+#     jsonpath="{.items[0].status.addresses[0].address}"
+#     NODE_IP=$(kubectl get nodes -n jenkins -o jsonpath=$jsonpath)
+#     echo http://$NODE_IP:$NODE_PORT/login
+#   register: jenkins_url
+
+# - name: Print jenkins url
+#   debug:
+#     var: jenkins_url.stdout_lines

@@ -1,0 +1,29 @@
+controller:
+#   ingress:
+#     enabled: true
+#     ingressClassName: nginx
+#     apiVersion: networking.k8s.io/v1
+#     hostName: "jenkins.192.168.0.240.nip.io"
+#     annotations:
+#       kubernetes.io/ingress.class: "nginx"
+#   spec:
+#   rules:
+#   - host: "jenkins.192.168.0.240.nip.io"
+#     http:
+#       paths:
+#         - path: "/"
+#           pathType: Prefix
+#           backend:
+#             service:
+#               name: "jenkins"
+#               port:
+#                 number: 8080
+  installPlugins:
+  - kubernetes:3690.va_9ddf6635481
+  - workflow-aggregator:581.v0c46fa_697ffd
+  - git:4.11.4
+  #- configuration-as-code:1429.v09b_044a_c93de
+  - configuration-as-code:1512.vb_79d418d5fc8
+  #- blueocean:1.24.6
+  - blueocean:1.25.6
+

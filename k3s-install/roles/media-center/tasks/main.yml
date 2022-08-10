@@ -24,10 +24,10 @@
     state: present
 
 
-# - name: Create openvpn secret
-#   kubernetes.core.k8s:
-#     src: openvpn-secret.yml
-#     state: present
+- name: Create openvpn secret
+  kubernetes.core.k8s:
+    src: openvpn-secret.yml
+    state: present
 
 # - name: Install openvpn transmission
 #   kubernetes.core.helm:
@@ -81,24 +81,24 @@
 #     values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/jackett-values.yml
 #     release_state: present
 
-- name: Create directory for Sonarr
-  file:
-    path: /mnt/ssd/media/configs/sonarr/
-    state: directory
+# - name: Create directory for Sonarr
+#   file:
+#     path: /mnt/ssd/media/configs/sonarr/
+#     state: directory
 
-- name: Create sonarr config
-  copy:
-    dest: /mnt/ssd/media/configs/sonarr/config.xml
-    content: |
-      <Config>
-        <UrlBase>/sonarr</UrlBase>
-      </Config>
+# - name: Create sonarr config
+#   copy:
+#     dest: /mnt/ssd/media/configs/sonarr/config.xml
+#     content: |
+#       <Config>
+#         <UrlBase>/sonarr</UrlBase>
+#       </Config>
 
-- name: Install sonarr PVR for usenet and bittorrent
-  kubernetes.core.helm:
-    update_repo_cache: true
-    name: sonarr
-    namespace: media
-    chart_ref: bananaspliff/sonarr
-    values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/sonarr-values.yml
-    release_state: present
+# - name: Install sonarr PVR for usenet and bittorrent
+#   kubernetes.core.helm:
+#     update_repo_cache: true
+#     name: sonarr
+#     namespace: media
+#     chart_ref: bananaspliff/sonarr
+#     values_files: /home/isaac/ansible/k3s-install/roles/media-center/files/sonarr-values.yml
+#     release_state: present

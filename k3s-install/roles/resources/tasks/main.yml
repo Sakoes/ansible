@@ -32,10 +32,8 @@
     update_repo_cache: true
     name: nginx-ingress
     namespace: kube-system
+    create_namespace: true
     chart_ref: nginx-stable/nginx-ingress
-    values:
-      defaultBackend:
-        enabled: false
   tags: nginx
 
 
