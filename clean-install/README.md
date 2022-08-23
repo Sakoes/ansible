@@ -2,8 +2,8 @@ clean-install playbook for rpi
 ===============================
 
 # Overview
-This playbook can be run on a fresh raspbian install. It configures, downloads and runs all tools and packages I like to work with
-To be able to run this playbook, the community.docker plugin is needed. It is defined in the requirements.txt file.
+This playbook can be run on a fresh raspbian install. It configures, downloads and runs all tools and packages I like to work with.  
+To be able to run this playbook, the community.docker plugin is needed. It is defined in the [requirements.yml](https://github.com/Sakoes/ansible/blob/main/clean-install/roles/requirements.yml) file.
 
 # Roles
 The playbook executes following roles
