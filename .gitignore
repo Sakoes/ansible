@@ -1,1 +1,2 @@
+# Don't upload plain CA secret. Use the sealed version for versuion control instead 
 /ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
