@@ -14,13 +14,6 @@
     repo_state: present
   tags: helm
 
-- name: Add nginx Helm repo
-  kubernetes.core.helm_repository:
-    repo_name: nginx-stable
-    repo_url: https://helm.nginx.com/stable
-    repo_state: present
-  tags: helm, nginx
-
 - name: Install Metallb
   kubernetes.core.helm:
     update_repo_cache: true
@@ -36,6 +29,13 @@
           - 192.168.0.240-192.168.0.250
   tags: metallb
     
+- name: Add nginx Helm repo
+  kubernetes.core.helm_repository:
+    repo_name: nginx-stable
+    repo_url: https://helm.nginx.com/stable
+    repo_state: present
+  tags: helm, nginx
+
 - name: Install nginx
   kubernetes.core.helm:
     update_repo_cache: true
@@ -45,19 +45,43 @@
     chart_ref: nginx-stable/nginx-ingress
   tags: nginx
 
+- name: Add kubeseal Helm repo
+  kubernetes.core.helm_repository:
+    repo_name: sealed-secrets
+    repo_url: https://bitnami-labs.github.io/sealed-secrets
+    repo_state: present
+  tags: sealed-secrets
 
-# - name: Install Metallb
-#   shell: |
-#     helm repo add stable https://charts.helm.sh/stable
-#     helm install metallb stable/metallb --namespace kube-system \
-#     --set configInline.address-pools[0].name=default \
-#     --set configInline.address-pools[0].protocol=layer2 \
-#     --set configInline.address-pools[0].addresses[0]=192.168.0.240-192.168.0.250
-#   tags: metallb
+- name: Install kubeseal server-side controller to encrypt secrets
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: sealed-secrets
+    namespace: kube-system
+    #helm create_namespace: true
+    chart_ref: sealed-secrets/sealed-secrets
+  tags: sealed-secrets
 
-# - name: Install nginx
-#   shell: |
-#     helm repo add nginx-stable https://helm.nginx.com/stable 
-#     helm repo update
-#     helm install nginx-ingress nginx-stable/nginx-ingress --namespace kube-system
-#   tags: nginx
+- name: Download kubeseal client-side CLI binary
+  ansible.builtin.get_url:
+    url: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.18.2/kubeseal-0.18.2-linux-arm64.tar.gz
+    dest: /home/isaac/
+  tags: sealed-secrets, kubeseal
+
+- name: Extract kubeseal binary
+  unarchive:
+    src: /home/isaac/kubeseal-0.18.2-linux-arm64.tar.gz
+    dest: /home/isaac/
+    exclude:
+      - LICENSE
+      - README.md
+  tags: sealed-secrets, kubeseal
+
+- name: Install kubeseal binary
+  shell: install -m 755 /home/isaac/kubeseal /usr/local/bin/kubeseal
+  tags: sealed-secrets, kubeseal
+
+- name: Delete kubeseal tar
+  file:
+    path: /home/isaac/kubeseal*
+    state: absent
+  tags: sealed-secrets, kubeseal
