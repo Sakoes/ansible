@@ -1,7 +1,7 @@
 k3s-install playbook for rpi
 ===============================
 ## Overview
-This playbook can be run on a fresh raspbian install. It downloads, configures k3s and runs all tools and applications I like to work with.  
+This playbook downloads k3s, configures the rpi and runs tools and applications I like to work with.  
 To be able to run this playbook, the community.kubernetes plugin is needed. It is defined in the [requirements.yml](https://github.com/Sakoes/ansible/blob/main/k3s-install/roles/requirements.yml) file.
 
 ## Roles
