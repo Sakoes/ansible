@@ -71,9 +71,19 @@
 #     replace: " tls.key: {{ key_encoded.stdout }}"
 #   tags: CA
 
-- name: Add Secret w/ cert & key to k8s cluster
+# - name: Add Secret w/ cert & key to k8s cluster
+#   kubernetes.core.k8s:
+#     src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+#     state: present
+#   tags: CA
+
+- name: Encrypt nginx-ca-secret w/ kubeseal
+  shell: cat /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml | kubeseal --controller-namespace kube-system --controller-name sealed-secrets --format yaml > /home/isaac/ansible/k3s-install/roles/certificate-authority/files/sealed-nginx-ca-secret.yaml
+  tags: CA
+
+- name: Deploy sealed secret
   kubernetes.core.k8s:
-    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-ca-secret.yml
+    src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/sealed-nginx-ca-secret.yaml
     state: present
   tags: CA
 
@@ -82,5 +92,6 @@
     src: /home/isaac/ansible/k3s-install/roles/certificate-authority/files/nginx-clusterissuer.yml
     state: present
   tags: CA
+
 
 
