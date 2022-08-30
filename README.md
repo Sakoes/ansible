@@ -5,9 +5,9 @@ Feel free to contact me in case you have questions, want to have a discussion or
 
 More detailed README's can be found in the corresponding directories.
 
-## clean-install
+## clean-install playbook
 The clean-install playbook can be run on a fresh raspbian install. It does some general configurations on the Raspberry Pi.  
 It also configures, downloads and runs diffenrent tools and packages like python, pip, Docker, homer-dashboard, portainer. This playbook uses docker-compose to run most services.
 
-## k3s-install
+## k3s-install playbook
 This playbook downloads k3s and configures the rpi to run k3s. It runs the same tools and services from the _clean-install_ playbook, but uses k3s instead of docker-compose.
